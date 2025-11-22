@@ -41,4 +41,8 @@ void write_log(char *msg)
 
         f_close(&file);
     }
+    else
+    {
+        printf("Failed to open log file: %d\n", fr);
+    }
 }
