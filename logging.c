@@ -1,23 +1,39 @@
 #include "sd_card.h"
 #include "ff.h"
+#include "f_util.h"
 
 const char *logfile = "0:/sensorlogs.csv";
 
-int setup_fs()
+void setup_fs(void)
 {
-    sd_init_driver();
-    sd_card_t *sd = sd_get_by_drive_prefix("0:/");
+    bool sd_bool = sd_init_driver();
 
-    FRESULT fr = f_mount(&sd->state.fatfs, sd_get_drive_prefix(sd), 1);
-    if (fr == FR_OK)
+    FATFS fs;
+    FRESULT fr = f_mount(&fs, "", 1);
+
+    if (fr != FR_OK)
     {
-        printf("Successfully mounted SD Card file-system.");
+        while (1)
+        {
+            printf("f_mount error: %s (%d)\n", FRESULT_str(fr), fr);
+        }
+        return;
     }
-    else
-    {
-        printf("Mount failed: %d\n", fr);
-        return -1;
-    }
+    // sd_init_driver();
+    // sd_card_t *sd = sd_get_by_drive_prefix("0:/");
+
+    // FRESULT fr = f_mount(&sd->state.fatfs, sd_get_drive_prefix(sd), 1);
+    // if (fr == FR_OK)
+    // {
+    //     printf("Successfully mounted SD Card file-system.");
+    // }
+    // else
+    // {
+    //     while (1)
+    //     {
+    //         printf("Mount failed: %d\n", fr);
+    //     }
+    // }
 }
 
 void write_log(char *msg)
